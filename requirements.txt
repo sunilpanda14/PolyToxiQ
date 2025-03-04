@@ -4,3 +4,4 @@ numpy
 pandas
 sentence_transformers
 scikit-learn
+plotly
