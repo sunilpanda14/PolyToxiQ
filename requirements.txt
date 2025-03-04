@@ -1,0 +1,6 @@
+streamlit
+matplotlib
+numpy
+pandas
+sentence_transformers
+sklearn
