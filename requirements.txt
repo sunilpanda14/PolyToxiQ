@@ -1,10 +1,10 @@
-streamlit
-pandas
-numpy
-matplotlib
-sentence-transformers
-scikit-learn
-plotly
+streamlit==1.37.0
+sentence-transformers==2.7.0
+plotly==5.22.0
 autogluon==1.1.0
-
+numpy==1.21.2
+pandas==2.2.2
+scikit-learn==1.4.0
+matplotlib==3.8.4
+autogluon==1.1.0  # Ensure compatibility with your project needs
 
