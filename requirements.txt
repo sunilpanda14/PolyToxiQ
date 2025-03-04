@@ -3,4 +3,4 @@ matplotlib
 numpy
 pandas
 sentence_transformers
-sklearn
+scikit-learn
