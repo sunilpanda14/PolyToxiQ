@@ -19,13 +19,13 @@ st.set_page_config(
 # Load data and models
 @st.cache_data
 def load_train_data():
-    data_path = "PolyToxiQ/Tox_train_data.csv"
+    data_path = "Tox_train_data.csv"
     train_df = pd.read_csv(data_path)
     return train_df
 
 @st.cache_resource
 def load_model():
-    model_path = "PolyToxiQ/ag-20240802_121037"
+    model_path = "ag-20240802_121037"
     predictor = TabularPredictor.load(model_path)
     return predictor
 
