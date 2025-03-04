@@ -4,5 +4,5 @@ plotly==5.22.0
 numpy>=1.26.0
 pandas>=2.0.0
 matplotlib==3.8.4
-autogluon.tabular
+autogluon.tabular==1.1.0
 scikit-learn
