@@ -19,13 +19,13 @@ st.set_page_config(
 # Load data and models
 @st.cache_data
 def load_train_data():
-    data_path = "Tox_train_data.csv"
+    data_path = "/home/sunil/am2/Toxpred/Poly_Toxin_AM_Final/Tox_train_data.csv"
     train_df = pd.read_csv(data_path)
     return train_df
 
 @st.cache_resource
 def load_model():
-    model_path = "ag-20240802_121037"
+    model_path = "/home/sunil/am2/Toxpred/Poly_Toxin_AM_Final/AutogluonModels/ag-20240802_121037"
     predictor = TabularPredictor.load(model_path)
     return predictor
 
@@ -71,13 +71,13 @@ def visualize_distance(similarity_score):
         showlegend=False
     ))
     
-    # Add markers for perfect match, current score, and no match
+   # Add markers for perfect match, current score, and no match
     fig.add_trace(go.Scatter(
         x=[0, similarity_score, 1], 
         y=[0, 0, 0],
         mode='markers+text',
-        marker=dict(size=[15, 25, 15], color=['green', 'red', 'blue']),
-        text=['Perfect Match', f'Similarity: {similarity_score:.3f}', 'No Match'],
+        marker=dict(size=[15, 25, 15], color=['blue', 'red', 'green']),
+        text=['No Match', f'Similarity: {similarity_score:.3f}', 'Perfect Match'],
         textposition='top center',
         showlegend=False
     ))
@@ -85,18 +85,38 @@ def visualize_distance(similarity_score):
     # Highlight the distance between current similarity and perfect match
     fig.add_shape(
         type="rect",
-        x0=similarity_score,
+        x0=0,
         y0=-0.02,
-        x1=0,
+        x1=similarity_score,
         y1=0.02,
         fillcolor="lightgreen",
         opacity=0.5,
         line_width=0,
     )
-    
+    # Highlight the distance portion (from current similarity to Perfect Match)
+    fig.add_shape(
+        type="rect",
+        x0=similarity_score,
+        y0=-0.02,
+        x1=1,
+        y1=0.02,
+        fillcolor="lightcoral",  # Light red color for distance
+        opacity=0.5,
+        line_width=0,
+    ) 
+
+     # Add similarity label (in the highlighted green area)
+    fig.add_annotation(
+        x=similarity_score/2,
+        y=-0.05,
+        text=f"Similarity: {similarity_score:.3f}",
+        showarrow=False,
+        font=dict(size=14)
+    )
+
     # Add distance label
     fig.add_annotation(
-        x=(similarity_score)/2,
+        x=(similarity_score +1)/2,
         y=-0.05,
         text=f"Distance: {distance:.3f}",
         showarrow=False,
@@ -162,26 +182,28 @@ def main():
         - **Persistent**, **Bioaccumulative(BIOACCUM)** ,**carcinogenicity(CARCINOGEN)**, **mutagenic(MUTA)**, **reproductive toxicity(REPROTOX)**, 
            **specific target organ toxicity(STOT)**, **Endocrine Disrutive Chemicals(EDC)**, and **aquatic toxicity(AQUATOX)**
         
-        Toxicity Classification Levels:
-                    
+        ### Toxicity Classification Levels
+        
+        Polymers are classified into three concern levels:
+        
         - **High** ☣️☣️☣️☣️☣️: **(4 < Hazard Criteria <=8)** These polymers may pose significant health or environmental risks and require strict handling protocols.
         
         - **Medium** ☣️☣️☣️: **(2 < Hazard Criteria <4)** Moderately concerning toxicity that requires proper handling and disposal procedures.
         
         - **Low** ☣️: **(0 <= Hazard Criteria <4)** Minimal toxicity concern under normal usage conditions.
         
-        ### References & Further Reading
         
+        ### References & Further Reading
+                    
         - [CompTOX21 Data Base and Challange](https://comptox.epa.gov/dashboard/chemical-lists/tox21sl)
         - [REACH REGULATION Article 57 (ANNEX XIV) TOXICITY CRITERIA]()
         - [Polymer Fingerprint and PSMILE](https://psmiles.readthedocs.io/en/latest/#what-is-a-psmiles-string)
-        - [GitHUb Repository: PSMILES - Fun with P🙂s strings](https://github.com/Ramprasad-Group/psmiles)
+        - [GitHUb Repository](https://github.com/Ramprasad-Group/psmiles)
         - [List of chemicals with high hazards for categorisation](https://www.industrialchemicals.gov.au/help-and-guides/list-chemicals-high-hazards-categorisation)
         - [Transfer Learning](https://pubs.acs.org/doi/10.1021/acs.jcim.0c00375)
         - [AutoGluon Documentation](https://auto.gluon.ai/stable/index.html)
         - [Scikit-learn Documentation](https://scikit-learn.org/stable/)
-        - [RDKit Documentation](https://www.rdkit.org/docs/index.html)
-        - [polyBERT SentenceTransformers ](https://kuenneth.uni-bayreuth.de/en/projects/index.html)
+        - [SentenceTransformers Documentation](https://www.sbert.net/)
         - [SMILES Notation for Chemical Structures](https://en.wikipedia.org/wiki/Simplified_molecular-input_line-entry_system)
         """)
     
@@ -190,7 +212,7 @@ def main():
     smile_input = st.text_input("🔍 Polymer SMILES String:", placeholder="Enter SMILES notation for your polymer...")
     
     # Add a sample button
-    if st.button("Load PSMILES"):
+    if st.button("Load Sample SMILES"):
         # You can replace this with a sample SMILES from your dataset
         smile_input = "CC(C)(C)C(=O)OCCC(C)CCC(C)CCC(C)CCC(C)C"
         st.session_state.smile_input = smile_input
@@ -245,14 +267,14 @@ def main():
                     st.markdown(f"<div class='smiles-box'>{reference_smile}</div>", unsafe_allow_html=True)
                     
                     # Similarity scores
-                    st.markdown(f"**Calculated Cosine Similarity Score:** {similarity_score:.4f}")
+                    st.markdown(f"**Calculated Similarity Score:** {similarity_score:.4f}")
                     st.markdown(f"**Reference Similarity Score:** {stored_similarity:.4f}")
                     
                     # Distance visualization
                     st.plotly_chart(visualize_distance(similarity_score), use_container_width=True)
                 
                 with col2:
-                    st.subheader("☣️ Toxicity Prediction Indicator: Class")
+                    st.subheader("☣️ Toxicity Class Prediction")
                     
                     # Set color based on toxicity level
                     if reference_toxicity.lower() == "high":
@@ -299,58 +321,72 @@ def main():
                         **Caution** : Standard laboratory safety practices are recommended as a precaution.
                         """)
                 
-                # Fingerprint comparison visualization
+                # Fingerprint comparison in tabular format
                 st.subheader("🧬 Fingerprint Comparison")
                 
-                # Only show a subset of fingerprint dimensions for visualization (first 20)
-                display_length = 20
+                # Only show a subset of fingerprint dimensions for display (first 20)
+                display_length = 600
                 
-                # Extract sample fingerprints
-                input_fingerprint_sample = input_fingerprint[:display_length]
-                reference_fingerprint_sample = train_df.iloc[closest_idx, 0:display_length].values
-                
-                # Calculate absolute difference
-                diff = np.abs(input_fingerprint_sample - reference_fingerprint_sample)
-                
-                # Create dataframe for visualization
-                vis_df = pd.DataFrame({
-                    'Dimension': range(1, display_length + 1),
-                    'Input Fingerprint': input_fingerprint_sample,
-                    'Reference Fingerprint': reference_fingerprint_sample,
-                    'Absolute Difference': diff
-                })
-                
-                # Create fingerprint comparison chart
-                fig = px.bar(
-                    vis_df, 
-                    x='Dimension',
-                    y=['Input Fingerprint', 'Reference Fingerprint'],
-                    barmode='group',
-                    title=f'Fingerprint Comparison (First {display_length} Dimensions)',
-                    color_discrete_sequence=['#1f77b4', '#ff7f0e']
-                )
-                
-                # Add difference line
-                fig.add_trace(
-                    go.Scatter(
-                        x=vis_df['Dimension'],
-                        y=vis_df['Absolute Difference'],
-                        mode='lines+markers',
-                        name='Absolute Difference',
-                        line=dict(color='red', width=2),
-                        marker=dict(size=8)
+                try:
+                    # Extract sample fingerprints and ensure proper type conversion
+                    input_fingerprint_sample = np.array(input_fingerprint[:display_length], dtype=float)
+                    reference_fingerprint_sample = np.array(train_df.iloc[closest_idx, 0:display_length].values, dtype=float)
+                    
+                    # Calculate absolute difference
+                    diff = np.abs(input_fingerprint_sample - reference_fingerprint_sample)
+                    
+                    # Create lists for dataframe to avoid type issues
+                    dimensions = list(range(1, display_length + 1))
+                    input_fp_list = [round(float(x), 4) for x in input_fingerprint_sample]
+                    ref_fp_list = [round(float(x), 4) for x in reference_fingerprint_sample]
+                    diff_list = [round(float(x), 4) for x in diff]
+                    
+                    # Create dataframe for tabular display
+                    vis_df = pd.DataFrame({
+                        'Dimension': dimensions,
+                        'Input Polymer Fingerprint': input_fp_list,
+                        'Reference Tox21 Molecule Fingerprint': ref_fp_list,
+                        'Absolute Difference': diff_list
+                    })
+                    
+                    # Add styling to highlight larger differences
+                    def highlight_diff(val):
+                        if isinstance(val, float) and val > 0.3:
+                            return 'background-color: rgba(255, 0, 0, 0.2)'
+                        return ''
+                    
+                    # Display the styled dataframe
+                    st.dataframe(
+                        vis_df.style.applymap(highlight_diff, subset=['Absolute Difference']),
+                        use_container_width=True,
+                        height=400
                     )
-                )
+                    
+                    # Summary statistics
+                    st.subheader("Fingerprint Similarity Statistics")
+                    col1, col2, col3 = st.columns(3)
+                    
+                    with col1:
+                        st.metric("Average Difference", f"{float(np.mean(diff)):.4f}")
+                    
+                    with col2:
+                        st.metric("Maximum Difference", f"{float(np.max(diff)):.4f}")
+                    
+                    with col3:
+                        st.metric("Dimensions with High Difference", f"{int(np.sum(diff > 0.1))}/{display_length}")
+                    
+                except Exception as e:
+                    st.error(f"Error displaying fingerprint comparison: {e}")
+                    st.info("Displaying simplified fingerprint information instead.")
+                    
+                    # Simple alternative display
+                    st.write("**Input Fingerprint Sample (first 5 dimensions):**")
+                    st.write(input_fingerprint[:5])
+                    
+                    st.write("**Reference Fingerprint Sample (first 5 dimensions):**")
+                    st.write(train_df.iloc[closest_idx, 0:5].values)
                 
-                fig.update_layout(
-                    height=500,
-                    legend=dict(orientation='h', yanchor='bottom', y=1.02, xanchor='right', x=1),
-                    xaxis_title='Fingerprint Dimension',
-                    yaxis_title='Value'
-                )
-                
-                st.plotly_chart(fig, use_container_width=True)
-                st.info("Note: Only showing the first 20 dimensions of the fingerprints for visualization clarity. The actual comparison uses all dimensions.")
+                st.info("Note: Only showing a subset of fingerprint dimensions for clarity. The actual comparison uses all dimensions.")
                 
             except Exception as e:
                 st.error(f"An error occurred during processing: {e}")
