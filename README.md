@@ -41,8 +41,11 @@ This application predicts the toxicity level of polymers based on their PSMILES 
    - [polyBERT SentenceTransformers ](https://kuenneth.uni-bayreuth.de/en/projects/index.html)
    - [SMILES Notation for Chemical Structures](https://en.wikipedia.org/wiki/Simplified_molecular-input_line-entry_system)
 
-![image](https://github.com/user-attachments/assets/4778360b-75e0-4b8e-ba52-1edbe89cfb86)
-![image](https://github.com/user-attachments/assets/16f00bd4-a1e4-4cea-90af-4998b3694f15)
+![image](https://github.com/user-attachments/assets/2b8aec05-e1ef-44cc-bf63-824208ce36f6)
+![image](https://github.com/user-attachments/assets/262c2a77-ed40-4854-b4f9-72eb689a9ca7)
+
+
+
 
 
  
