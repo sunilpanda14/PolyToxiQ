@@ -354,7 +354,7 @@ def main():
                     
                     # Add styling to highlight larger differences
                     def highlight_diff(val):
-                        if isinstance(val, float) and val > 0.3:
+                        if isinstance(val, float) and val > 0.7:
                             return 'background-color: rgba(255, 0, 0, 0.2)'
                         return ''
                     
