@@ -8,6 +8,8 @@ import plotly.express as px
 import plotly.graph_objects as go
 from autogluon.tabular import TabularPredictor
 import os
+# Import your config at the top of PolytoxiQ.py
+import config
 
 # Page configuration
 st.set_page_config(
@@ -16,16 +18,17 @@ st.set_page_config(
     layout="wide"
 )
 
-# Load data and models
+# Then update your load_train_data function
 @st.cache_data
 def load_train_data():
-    data_path = "/home/sunil/am2/Toxpred/Poly_Toxin_AM_Final/Tox_train_data.csv"
+    data_path = config.get_data_path()
     train_df = pd.read_csv(data_path)
     return train_df
 
+# And update your load_model function
 @st.cache_resource
 def load_model():
-    model_path = "/home/sunil/am2/Toxpred/Poly_Toxin_AM_Final/AutogluonModels/ag-20240802_121037"
+    model_path = config.get_model_path()
     predictor = TabularPredictor.load(model_path)
     return predictor
 
