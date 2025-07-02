@@ -6,3 +6,6 @@ pandas>=2.0.0
 matplotlib==3.8.4
 autogluon.tabular==1.1.0
 scikit-learn
+rdkit-pypi
+psmiles
+streamlit-ketcher
